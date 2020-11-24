@@ -6,12 +6,17 @@ import java.util.Objects;
 public class Topic {
 
     private String name;
+
     private ArrayList<Message> messages = new ArrayList<>();
 
     public Topic(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns the name of the topic.
+     * @return The name itself.
+     */
     public String getName() {
         return name;
     }
@@ -22,6 +27,14 @@ public class Topic {
      */
     public void addMessage(Message message) {
         messages.add(message);
+    }
+
+    /**
+     * Returns the messages of this topic.
+     * @return The thread itself.
+     */
+    public ArrayList<Message> getMessages() {
+        return messages;
     }
 
     /**

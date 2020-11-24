@@ -11,12 +11,20 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Authenticator {
 
+    /** The key required for symmetric encryption (AES) **/
     private SecretKey AESKey;
+    /** The initialization vector required by the Galois/Counter operation mode (GCM) of AES **/
     private byte[] iv;
+    /** The length of the initialization vector. **/
     private static final int LEN_GCM_IV_BYTES = 12;
+    /** The length of the authentication tag required by the GCM of AES **/
     private static final int LEN_GCM_TAG_BITS = 128;
+    /** The length of the key **/
     private static final int LEN_KEY_BITS = 128;
 
+    /**
+     * Constructor
+     */
     public Authenticator() {
         try {
             SecureRandom secureRandom = SecureRandom.getInstanceStrong();
@@ -33,10 +41,10 @@ public class Authenticator {
     }
 
     /**
-     * Generates an user token by encrypting the username using AES-128.
+     * Generates an user token by encrypting the user name.
      *
      * @param username The username to generate the authentication token from.
-     * @return The generated authentication token.
+     * @return The generated authentication token, encoded in Base64 and encrypted with AES-128.
      * **/
     public String generateUserToken(String username) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
@@ -46,14 +54,14 @@ public class Authenticator {
         byte[] token = new byte[LEN_GCM_IV_BYTES + cipher.getOutputSize(decryptedBytes.length)];
         System.arraycopy(iv, 0, token, 0, LEN_GCM_IV_BYTES);
         cipher.doFinal(decryptedBytes, 0, decryptedBytes.length, token, LEN_GCM_IV_BYTES);
-        String encodedToken = Base64.getEncoder().encodeToString(token);
-        return encodedToken;
+        return Base64.getEncoder().encodeToString(token);
     }
 
     /**
+     * Decrypts the authentication token and retrieves the user name.
      *
-     * @param encodedToken
-     * @return
+     * @param encodedToken The token, encoded in Base64 and encrypted with AES-128.
+     * @return The username itself.
      */
     public String getUserNameFromToken(String encodedToken) throws GeneralSecurityException, IllegalArgumentException {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
@@ -61,8 +69,7 @@ public class Authenticator {
         GCMParameterSpec paramSpec = new GCMParameterSpec(LEN_GCM_TAG_BITS, token, 0, LEN_GCM_IV_BYTES);
         cipher.init(Cipher.DECRYPT_MODE, AESKey, paramSpec);
         byte[] decryptedBytes = cipher.doFinal(token, LEN_GCM_IV_BYTES, token.length - LEN_GCM_IV_BYTES);
-        String username = new String(decryptedBytes, UTF_8);
-        return username;
+        return new String(decryptedBytes, UTF_8);
     }
 
 }

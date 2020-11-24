@@ -7,61 +7,51 @@ public class Response implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
-    private String statusMessage;
-    private String payload;
-    private ServerState currentState;
+    private final String message;
+    private final String payload;
+    private final ServerState currentState;
 
+    /**
+     * The constructor.
+     * @param message The message.
+     * @param payload The payload, i.e. attached additional info.
+     * @param currentState The state the server is in, mainly used for proper token management.
+     */
     public Response(String message, String payload, ServerState currentState) {
-        this.statusMessage = message;
+        this.message = message;
         this.payload = payload;
         this.currentState = currentState;
     }
 
-    public String getStatusMessage() {
-        return statusMessage;
-    }
-
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
-    }
+    // Necessary getters and setters
 
     public String getPayload() {
         return payload;
     }
 
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-
-    public ServerState getCurrentState() {
-        return currentState;
-    }
-
-    public void setCurrentState(ServerState currentState) {
-        this.currentState = currentState;
-    }
-
-    @Override
-    public String toString() {
-        return "Response{" +
-                "statusMessage='" + statusMessage + '\'' +
-                ", payload='" + payload + '\'' +
-                ", currentState=" + currentState +
-                '}';
-    }
+    // Overridden functions inherited from Object
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Response response = (Response) o;
-        return statusMessage.equals(response.statusMessage) &&
+        return message.equals(response.message) &&
                 payload.equals(response.payload) &&
                 currentState == response.currentState;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(statusMessage, payload, currentState);
+        return Objects.hash(message, payload, currentState);
+    }
+
+    @Override
+    public String toString() {
+        return "Response{" +
+                "statusMessage='" + message + '\'' +
+                ", payload='" + payload + '\'' +
+                ", currentState=" + currentState +
+                '}';
     }
 }

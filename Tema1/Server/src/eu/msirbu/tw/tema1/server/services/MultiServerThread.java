@@ -1,17 +1,14 @@
 package eu.msirbu.tw.tema1.server.services;
 
+import eu.msirbu.tw.tema1.common.Request;
 import eu.msirbu.tw.tema1.common.Response;
-import eu.msirbu.tw.tema1.server.data.Dataset;
 
 import java.io.*;
 import java.net.Socket;
-import java.security.NoSuchAlgorithmException;
 
 public class MultiServerThread implements Runnable {
 
     private final Socket socket;
-    private static final Authenticator auth = new Authenticator();
-    private static Dataset dataset;
 
     public MultiServerThread(Socket socket) {
         this.socket = socket;
@@ -21,24 +18,28 @@ public class MultiServerThread implements Runnable {
     public void run() {
         try (
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
         ) {
-            String inputLine;
-            Response outputLine;
-            Protocol protocol = new Protocol(auth);
+            Request request;
+            Protocol protocol = new Protocol();
 
             System.out.println("Connection established.");
-            outputLine = protocol.processInput(null);
-            out.writeObject(outputLine);
+            out.writeObject(protocol.processInput(new Request()));
 
-            while((inputLine = in.readLine()) != null) {
-                outputLine = protocol.processInput(inputLine);
-                out.writeObject(outputLine);
-                if (outputLine.getPayload().toUpperCase().equals("EXIT"))
-                    break;
+            try {
+                while ((request = (Request) (in.readObject())) != null) {
+                    Response response = protocol.processInput(request);
+                    out.writeObject(response);
+                    if (response.getPayload().toUpperCase().equals("EXIT"))
+                        break;
+                }
+                socket.close();
+                System.out.println("Connection ended gracefully.");
+            } catch (EOFException e) {
+                System.out.println("Client terminated connection unexpectedly.");
+            } catch (ClassNotFoundException e) {
+                System.out.println("Malformed incoming packet. Disconnecting.");
             }
-            socket.close();
-            System.out.println("Connection ended gracefully.");
         } catch (IOException e) {
             e.printStackTrace();
         }

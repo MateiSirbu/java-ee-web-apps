@@ -15,11 +15,6 @@ public class User {
         return subscriptions;
     }
 
-    public void setSubscriptions(ArrayList<String> subscriptions) {
-        this.subscriptions = subscriptions;
-    }
-
-
     /**
      * Attempts adding a topic to this user's subscription list.
      * @param topicName The name of the topic the user is attempting to subscribe to.

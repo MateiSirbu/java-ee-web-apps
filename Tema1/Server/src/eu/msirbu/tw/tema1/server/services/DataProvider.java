@@ -80,10 +80,8 @@ public class DataProvider {
         final int topicIndex = topics.indexOf(new Topic(topic));
         if (topicIndex == -1)
             return CRUDStatus.FAIL_ITEM_NOT_FOUND;
-        final int topicIndexInSubscription = users.get(userIndex).getSubscriptions().indexOf(topic);
-        if (topicIndexInSubscription != -1)
+        if (!users.get(userIndex).addSubscription(topic))
             return CRUDStatus.FAIL_DUPLICATE;
-        users.get(userIndex).addSubscription(topic);
         return CRUDStatus.SUCCESS;
     }
 

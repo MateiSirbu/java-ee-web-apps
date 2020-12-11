@@ -1,11 +1,11 @@
 package eu.msirbu.tw.tema1.server.services;
 
 import com.sun.tools.javac.util.Pair;
-import eu.msirbu.tw.tema1.common.Request;
-import eu.msirbu.tw.tema1.common.Response;
-import eu.msirbu.tw.tema1.common.ServerState;
 import eu.msirbu.tw.tema1.server.constants.CRUDStatus;
 import eu.msirbu.tw.tema1.server.data.Message;
+import eu.msirbu.tw.tema1.server.data.Request;
+import eu.msirbu.tw.tema1.server.data.Response;
+import eu.msirbu.tw.tema1.server.data.ServerState;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;

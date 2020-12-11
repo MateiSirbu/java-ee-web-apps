@@ -1,9 +1,12 @@
 package eu.msirbu.tw.tema1.server.services;
 
-import eu.msirbu.tw.tema1.common.Request;
-import eu.msirbu.tw.tema1.common.Response;
+import eu.msirbu.tw.tema1.server.data.Request;
+import eu.msirbu.tw.tema1.server.data.Response;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class MultiServerThread implements Runnable {

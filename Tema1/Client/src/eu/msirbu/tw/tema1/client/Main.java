@@ -3,9 +3,9 @@
  */
 package eu.msirbu.tw.tema1.client;
 
-import eu.msirbu.tw.tema1.common.Request;
-import eu.msirbu.tw.tema1.common.Response;
-import eu.msirbu.tw.tema1.common.ServerState;
+import eu.msirbu.tw.tema1.server.data.Request;
+import eu.msirbu.tw.tema1.server.data.Response;
+import eu.msirbu.tw.tema1.server.data.ServerState;
 
 import java.io.*;
 import java.net.Socket;
@@ -27,11 +27,10 @@ public class Main {
      * Note that the path should be modified for each client when testing on the same machine.
      * In a production environment, each machine should store a single token, at ~/.jforums/token.dat.
      */
-    private static final String TOKEN_PATH = System.getProperty("user.home") + "/.jforums/token.dat";
+    private static final String TOKEN_PATH = System.getProperty("user.home") + "/.jforums/token2.dat";
 
     /**
      * The main thread. All the juicy action happens here.
-     *
      * @param args The command line arguments; none required.
      */
     public static void main(String[] args) {

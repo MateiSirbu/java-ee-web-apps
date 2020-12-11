@@ -5,9 +5,9 @@ import java.util.Objects;
 
 public class Topic {
 
-    private String name;
+    private final String name;
 
-    private ArrayList<Message> messages = new ArrayList<>();
+    private final ArrayList<Message> messages = new ArrayList<>();
 
     public Topic(String name) {
         this.name = name;

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="en">
+<head>
+    <title>Vacations@Contoso</title>
+    <link rel="stylesheet" type="text/css" href="./css/material-components-web.min.css"/>
+    <link rel="stylesheet" href="./css/material-icons.css"/>
+    <link rel="stylesheet" href="./css/roboto.css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="mdc-typography">
+<div class="home-container">
+    <div class="home-card">
+        <img class="main-logo" th:src="@{images/logo.png}" alt="logo" src="../static/images/logo.png">
+        <a class="mdc-button mdc-button--raised" href="login">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">search</i>
+            <span class="mdc-button__label">MANAGE VACATION REQUESTS</span>
+        </a>
+    </div>
+</div>
+</body>
+</html>

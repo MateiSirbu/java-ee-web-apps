@@ -4,8 +4,11 @@
  */
 package services;
 
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,6 +18,9 @@ import java.util.concurrent.TimeUnit;
  * Schedules the forecast update event.
  */
 public class Scheduler extends HttpServlet {
+
+    ScheduledExecutorService scheduler;
+
     @Override
     public void init() throws ServletException {
         super.init();
@@ -45,11 +51,48 @@ public class Scheduler extends HttpServlet {
         final int MILLISECS_TO_FIRST_EXEC = 60000 * MINS_TO_NEXT_HR + 1000 * SECS_TO_NEXT_HR + MILLISECS_TO_NEXT_HR;
 
         // Service that executes the asynchronous task.
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(() -> {
+            try {
+                System.out.print("\nInaccuWeather is updating forecasts ─");
+                dataProvider.generateForecasts(true);
+                System.out.print("\b\b...\nUpdate completed.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, MILLISECS_TO_FIRST_EXEC, UPDATE_PERIOD, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Used for manually triggering the asynchronous update event.
+     */
+    @Override
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+        DataProvider dataProvider = (DataProvider) getServletConfig().getServletContext().getAttribute("dataProvider");
+        final AsyncContext asyncContext = req.startAsync();
+        final long TERMINATION_TIMEOUT = 60;
+
+        asyncContext.start(() -> {
+            if (!scheduler.isShutdown()) {
+                scheduler.shutdown();
+                System.out.println("\n\n[!] The scheduler is being shut down.\n" +
+                        "[!] Please wait until pending updates, if any, have completed execution...");
+                try {
+                    if (!scheduler.awaitTermination(TERMINATION_TIMEOUT, TimeUnit.SECONDS)) {
+                        scheduler.shutdownNow();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    scheduler.shutdownNow();
+                    Thread.currentThread().interrupt();
+                } finally {
+                    System.out.println("\n[!] Scheduler has been shut down. Updating manually:");
+                }
+            }
             System.out.print("\nInaccuWeather is updating forecasts ─");
             dataProvider.generateForecasts(true);
-            System.out.print("\b\b...\nDone.\n");
-        }, MILLISECS_TO_FIRST_EXEC, UPDATE_PERIOD, TimeUnit.MILLISECONDS);
+            System.out.print("\b\b...\nUpdate completed.");
+            asyncContext.complete();
+        });
     }
 }

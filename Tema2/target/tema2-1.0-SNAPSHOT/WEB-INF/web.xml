@@ -3,26 +3,22 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-    <display-name>AsynchronousServlets</display-name>
+    <display-name>WeatherHTTPServlets</display-name>
     <servlet>
         <servlet-name>Dispatcher</servlet-name>
         <servlet-class>services.Dispatcher</servlet-class>
-        <async-supported>true</async-supported>
     </servlet>
     <servlet>
         <servlet-name>ReverseGeocoder</servlet-name>
         <servlet-class>services.ReverseGeocoder</servlet-class>
-        <async-supported>true</async-supported>
     </servlet>
     <servlet>
         <servlet-name>ForecastProvider</servlet-name>
         <servlet-class>services.ForecastPrinter</servlet-class>
-        <async-supported>true</async-supported>
     </servlet>
     <servlet>
         <servlet-name>StringDisambiguator</servlet-name>
         <servlet-class>services.StringDisambiguator</servlet-class>
-        <async-supported>true</async-supported>
     </servlet>
     <servlet>
         <servlet-name>Scheduler</servlet-name>
@@ -37,7 +33,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Scheduler</servlet-name>
-        <url-pattern>/schedule</url-pattern>
+        <url-pattern>/update</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ReverseGeocoder</servlet-name>

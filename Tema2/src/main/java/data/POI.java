@@ -1,3 +1,7 @@
+/*
+ * InaccuWeather
+ * (c) 2020 Matei Sîrbu.
+ */
 package data;
 
 import javafx.util.Pair;

@@ -1,0 +1,65 @@
+html {
+    height: 100%
+}
+
+body {
+    height: 100%
+}
+
+img {
+    pointer-events: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.error {
+    padding: 10px;
+}
+
+.login-container {
+    background-image: url('../images/msft_login.png');
+    background-size: 100% auto;
+    background-repeat: repeat-y;
+    background-position: left top;
+}
+
+.main-logo {
+    width: 550px
+}
+
+.auth-required-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 15;
+    border-color: #333333;
+    border-width: 2px;
+    border-style: solid;
+    width: 500px;
+    height: 150px;
+    margin: -75px 0 0 -250px;
+    text-align: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: white;
+    box-shadow: 10px 10px 15px 8px rgba(0,0,0,0.35);
+}
+
+.home-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 15;
+    border-color: #333333;
+    border-width: 2px;
+    border-style: solid;
+    width: 650px;
+    height: 310px;
+    margin: -155px 0 0 -325px;
+    text-align: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: white;
+    box-shadow: 10px 10px 15px 8px rgba(0,0,0,0.35);
+}

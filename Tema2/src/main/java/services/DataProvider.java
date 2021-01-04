@@ -1,3 +1,7 @@
+/*
+ * InaccuWeather
+ * (c) 2020 Matei Sîrbu.
+ */
 package services;
 
 import data.Forecast;
@@ -6,6 +10,7 @@ import javafx.util.Pair;
 
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Provides and manipulates mock weather data.
@@ -36,10 +41,10 @@ public class DataProvider {
             new POI(21, "Kinshasa", new Pair<>(-4.440, 15.266), 423, "GMT+1"),
             new POI(22, "McMurdo Station", new Pair<>(-77.846, 166.69), 176, "GMT+13"),
             new POI(23, "Cairo", new Pair<>(30.044, 31.235), 23, "GMT+2"),
-            new POI(24, "Everest Mt.", new Pair<>(27.988, 86.924), 8848, "GMT+5:45"),
+            new POI(24, "Mount Everest", new Pair<>(27.988, 86.924), 8848, "GMT+5:45"),
             new POI(25, "Tokyo", new Pair<>(35.681, 139.76), 7, "GMT+9")
     ));
-    ArrayList<Forecast> forecasts = new ArrayList<>();
+    CopyOnWriteArrayList<Forecast> forecasts = new CopyOnWriteArrayList<>();
     final int UPDATE_OVERHEAD;
 
     public DataProvider(int UPDATE_OVERHEAD) {
@@ -50,20 +55,6 @@ public class DataProvider {
 
     public ArrayList<POI> getPointsOfInterest() {
         return pointsOfInterest;
-    }
-
-    /**
-     * Gets the name of a point of interest.
-     *
-     * @param id The number that identifies the POI.
-     * @return The name of the POI.
-     */
-    public String getPoiNameById(int id) {
-        for (POI poi : pointsOfInterest) {
-            if (poi.getId() == id)
-                return poi.getName();
-        }
-        return "";
     }
 
     /**
@@ -113,7 +104,7 @@ public class DataProvider {
      * @param forecasts The list of forecasts to be modified.
      * @param poiId     The ID of the POI whose forecasts will be deleted.
      */
-    public ArrayList<Forecast> deleteForecastsByPoiId(ArrayList<Forecast> forecasts, int poiId) {
+    public CopyOnWriteArrayList<Forecast> deleteForecastsByPoiId(CopyOnWriteArrayList<Forecast> forecasts, int poiId) {
         forecasts.removeIf(forecast -> forecast.getIdPoi() == poiId);
         return forecasts;
     }
@@ -122,7 +113,7 @@ public class DataProvider {
      * An algorithm that generates (kinda) accurate weather forecasts,
      * based on the latitude of the POI and the time of the day.
      */
-    public void generateForecasts(boolean isUpdate) {
+    public void generateForecasts(boolean willLog) {
         int spinningRodAnimationFrame = 0;
         for (POI poi : pointsOfInterest) {
             forecasts = deleteForecastsByPoiId(forecasts, poi.getId());
@@ -227,7 +218,7 @@ public class DataProvider {
                 forecasts.add(forecast);
                 calendar.add(Calendar.HOUR_OF_DAY, 1);
             }
-            if (isUpdate) {
+            if (willLog) {
                 try {
                     Thread.sleep(UPDATE_OVERHEAD);
                     String updateStatus = "\rInaccuWeather is updating forecasts ";
@@ -253,5 +244,4 @@ public class DataProvider {
             }
         }
     }
-
 }

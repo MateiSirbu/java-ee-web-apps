@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="en">
+<head>
+    <title>Authenticate</title>
+    <link rel="stylesheet" type="text/css" href="./css/material-components-web.min.css"/>
+    <link rel="stylesheet" href="./css/material-icons.css"/>
+    <link rel="stylesheet" href="./css/roboto.css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="mdc-typography login-container">
+<div class="auth-required-card">
+    <h1>Authentication is required</h1>
+    <a class="mdc-button mdc-button--raised" href="oauth2/authorization/azure">
+        <img src="http://microsoft.com/favicon.ico" alt="Microsoft logo" with="20" height="20">
+        <span class="mdc-button__label">&nbsp;&nbsp;SIGN IN WITH MICROSOFT</span>
+    </a>
+</div>
+<div class="error" th:if="${param.error}" th:with="errorMsg=${session['SPRING_SECURITY_LAST_EXCEPTION'].message}">
+    Error: <span th:text="${errorMsg}"></span>
+</div>
+</body>
+</html>

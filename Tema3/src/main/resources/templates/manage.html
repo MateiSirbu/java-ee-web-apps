@@ -8,7 +8,23 @@
     <link rel="stylesheet" href="./css/style.css" type="text/css">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 </head>
-<body>
+<body class="mdc-typography">
+<div class="manage-navbar">
+    <div class="navbar-logo-container">
+        <img class="navbar-logo" src="./images/logo_inline.png" alt="Logo">
+    </div>
+    <div class="navbar-greetings-container">
+        <div class="navbar-greetings">
+            <b>Hello, <span th:text="${name}"></span></b>&nbsp;&lt;<span th:text="${email}"></span>&gt;
+        </div>
+    </div>
+    <a class="mdc-button mdc-button--raised sign-out-button" href="login">
+        <i class="material-icons mdc-button__icon" aria-hidden="true">exit_to_app</i>
+        <span class="mdc-button__label sign-out-label">SIGN OUT</span>
+    </a>
+</div>
+<div class="page-content-navbar-constrained">
 
+</div>
 </body>
 </html>

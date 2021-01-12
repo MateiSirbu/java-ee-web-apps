@@ -17,8 +17,14 @@ img {
     padding: 10px;
 }
 
-.login-container {
-    background-image: url('../images/msft_login.png');
+.mdc-typography {
+    margin: 0px;
+}
+
+.home-container {
+    width: 100%;
+    height: 100%;
+    background-image: url("../images/msft_login.png");
     background-size: 100% auto;
     background-repeat: repeat-y;
     background-position: left top;
@@ -26,24 +32,6 @@ img {
 
 .main-logo {
     width: 550px
-}
-
-.auth-required-card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 15;
-    border-color: #333333;
-    border-width: 2px;
-    border-style: solid;
-    width: 500px;
-    height: 150px;
-    margin: -75px 0 0 -250px;
-    text-align: center;
-    justify-content: center;
-    padding: 10px;
-    background-color: white;
-    box-shadow: 10px 10px 15px 8px rgba(0,0,0,0.35);
 }
 
 .home-card {
@@ -59,7 +47,59 @@ img {
     margin: -155px 0 0 -325px;
     text-align: center;
     justify-content: center;
-    padding: 10px;
     background-color: white;
     box-shadow: 10px 10px 15px 8px rgba(0,0,0,0.35);
+}
+
+.manage-navbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 50px;
+    background-color: #9a9a9a;
+    width: 100%;
+}
+
+.navbar-logo-container {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+}
+
+.navbar-greetings-container {
+    position: fixed !important;
+    left: 480px;
+}
+
+.navbar-logo {
+    height: 50px;
+}
+
+.navbar-greetings {
+    margin-top: 14px;
+    font-size: 16pt;
+    white-space: nowrap;
+    color: black;
+}
+
+.sign-out-button {
+    position: fixed !important;
+    right: 10px;
+    top: 5px;
+    height: 40px;
+    width: auto;
+    max-width: 350px;
+}
+
+.sign-out-label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.page-content-navbar-constrained {
+    padding-top: 70px;
+    padding-left: 20px;
+    padding-right: 20px;
 }

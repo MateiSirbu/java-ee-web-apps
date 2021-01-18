@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="en">
+<head>
+    <title>Vacations@Contoso - Respond</title>
+    <link rel="stylesheet" type="text/css" href="./css/material-components-web.min.css"/>
+    <link rel="stylesheet" href="./css/material-icons.css"/>
+    <link rel="stylesheet" href="./css/roboto.css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="mdc-typography">
+<div class="navbar">
+    <div class="navbar-logo-container">
+        <img class="navbar-logo" src="./images/logo_inline.png" alt="Logo">
+    </div>
+    <div class="navbar-greetings-container">
+        <div class="navbar-greetings">
+            <b>Hello,
+                <img th:src="@{images/active_directory.png}" alt="Active Directory icon"
+                     src="../static/images/active_directory.png" width="20" height="20">
+                <span th:text="${name}"></span></b>&nbsp;(<span th:text="${email}"></span>)
+        </div>
+    </div>
+    <a class="mdc-button mdc-button--raised sign-out-button" href="login">
+        <i class="material-icons mdc-button__icon" aria-hidden="true">exit_to_app</i>
+        <span class="mdc-button__label sign-out-label">SIGN OUT</span>
+    </a>
+</div>
+<div class="page-content-navbar-constrained">
+    <h1>Respond to subordinates' requests</h1>
+</div>
+</body>
+</html>

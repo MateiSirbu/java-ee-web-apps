@@ -1,23 +1,31 @@
 package eu.msirbu.tw.tema3.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "employee")
+@Table(name = "Employee")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "given_name")
+    @Column(name = "givenName")
     private String givenName;
-    @Column(name = "family_name")
+    @Column(name = "familyName")
     private String familyName;
     @Column(name = "email")
     private String email;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "employee")
     private List<Request> requests;
+    @Column(name = "vacationDayQuota")
+    private int vacationDayQuota;
+    @ManyToMany
+    @JoinTable(name = "EmployeeTeam",
+            joinColumns = @JoinColumn(name = "idEmployee"),
+            inverseJoinColumns = @JoinColumn(name = "idTeam"))
+    private List<Team> teams;
 
     public Employee() {
         super();
@@ -43,6 +51,32 @@ public class Employee {
         return requests;
     }
 
+    public List<Manager> getSuperiors() {
+        List<Manager> superiors = new ArrayList<>();
+        for (Team team : teams) {
+            Manager leader = team.getLeader();
+            if (leader.getId() != id)
+                superiors.add(team.getLeader());
+        }
+        return superiors;
+    }
+
+    public int getVacationDayQuota() {
+        return vacationDayQuota;
+    }
+
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    private List<String> getTeamNames() {
+        List<String> teamNames = new ArrayList<>();
+        for (Team team : teams) {
+            teamNames.add(team.getName());
+        }
+        return teamNames;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -63,4 +97,24 @@ public class Employee {
         this.requests = requests;
     }
 
+    public void setVacationDayQuota(int vacationDayQuota) {
+        this.vacationDayQuota = vacationDayQuota;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", givenName='" + givenName + '\'' +
+                ", familyName='" + familyName + '\'' +
+                ", email='" + email + '\'' +
+                ", requests=" + requests +
+                ", vacationDayQuota=" + vacationDayQuota +
+                ", teams=" + getTeamNames() +
+                '}';
+    }
 }

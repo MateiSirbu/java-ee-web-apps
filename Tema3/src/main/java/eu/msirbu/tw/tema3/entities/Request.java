@@ -4,22 +4,20 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "request")
+@Table(name = "Request")
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @ManyToOne
-    @JoinColumn(name = "id_employee")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idEmployee")
     private Employee employee;
-    @Column(name = "title")
-    private String title;
     @Column(name = "description")
     private String description;
-    @Column(name = "start_date", columnDefinition = "DATE")
+    @Column(name = "startDate", columnDefinition = "DATE")
     private LocalDate startDate;
-    @Column(name = "end_date", columnDefinition = "DATE")
+    @Column(name = "endDate", columnDefinition = "DATE")
     private LocalDate endDate;
 
     public Request() {
@@ -46,10 +44,6 @@ public class Request {
         return description;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -70,7 +64,14 @@ public class Request {
         this.startDate = startDate;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    @Override
+    public String toString() {
+        return "Request{" +
+                "id=" + id +
+                ", employee=" + employee +
+                ", description='" + description + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                '}';
     }
 }

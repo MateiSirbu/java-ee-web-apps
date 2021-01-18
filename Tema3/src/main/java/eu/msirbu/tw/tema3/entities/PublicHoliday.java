@@ -1,23 +1,35 @@
 package eu.msirbu.tw.tema3.entities;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
-@Table(name = "Status")
-public class Status {
+@Table(name = "PublicHoliday")
+public class PublicHoliday {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+    @Column(name = "date", columnDefinition = "DATE")
+    private LocalDate date;
     @Column(name = "name")
     private String name;
 
-    public Status() {
+    public PublicHoliday() {
         super();
     }
 
     public int getId() {
         return id;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public String getFormattedDate() {
+        return date.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy"));
     }
 
     public String getName() {
@@ -32,12 +44,16 @@ public class Status {
         this.name = name;
     }
 
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
-        return "Status{" +
+        return "PublicHoliday{" +
                 "id=" + id +
+                ", date=" + date +
                 ", name='" + name + '\'' +
                 '}';
     }
 }
-

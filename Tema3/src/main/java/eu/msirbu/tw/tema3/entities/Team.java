@@ -1,9 +1,10 @@
 package eu.msirbu.tw.tema3.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "team")
+@Table(name = "Team")
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,8 +13,10 @@ public class Team {
     @Column(name = "name")
     private String name;
     @OneToOne
-    @JoinColumn(name = "id_leader")
+    @JoinColumn(name = "idLeader")
     private Manager leader;
+    @ManyToMany(mappedBy = "teams")
+    private List<Employee> members;
 
     public Team() {
         super();
@@ -31,6 +34,10 @@ public class Team {
         return leader;
     }
 
+    public List<Employee> getMembers() {
+        return members;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -41,5 +48,19 @@ public class Team {
 
     public void setLeader(Manager leader) {
         this.leader = leader;
+    }
+
+    public void setMembers(List<Employee> members) {
+        this.members = members;
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", leader=" + leader +
+                ", members=" + members +
+                '}';
     }
 }

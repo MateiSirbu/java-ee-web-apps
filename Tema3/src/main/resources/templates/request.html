@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="en">
+<head>
+    <title>Vacations@Contoso - Request a vacation</title>
+    <link rel="stylesheet" type="text/css" href="./css/material-components-web.min.css"/>
+    <link rel="stylesheet" href="./css/material-icons.css"/>
+    <link rel="stylesheet" href="./css/roboto.css">
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+</head>
+<body class="mdc-typography">
+<div class="navbar">
+    <div class="navbar-logo-container">
+        <img class="navbar-logo" src="./images/logo_inline.png" alt="Logo">
+    </div>
+    <div class="navbar-greetings-container">
+        <div class="navbar-greetings">
+            <b>Hello,
+                <img th:src="@{images/active_directory.png}" alt="Active Directory icon"
+                     src="../static/images/active_directory.png" width="20" height="20">
+                <span th:text="${name}"></span></b>&nbsp;(<span th:text="${email}"></span>)
+        </div>
+    </div>
+    <a class="mdc-button mdc-button--raised sign-out-button" href="login">
+        <i class="material-icons mdc-button__icon" aria-hidden="true">exit_to_app</i>
+        <span class="mdc-button__label sign-out-label">SIGN OUT</span>
+    </a>
+</div>
+<div class="page-content-navbar-constrained">
+    <h1>Request a vacation</h1>
+    <form name="form" th:action="@{/request_submit}" method="post">
+        <div class="control">
+            You would like to be out-of-office,
+            <label>
+                effective
+                <input type="date" name="effectiveDate" th:value="${effectiveDate}">
+            </label>
+            <label>
+                until
+                <input type="date" name="untilDate" th:value="${untilDate}">
+            </label>.
+        </div>
+        <div class="control">
+            Please note that weekends and public holidays do not count towards your quota. <br>
+            <div th:if="${teamLeaders.isEmpty() and superior == null}">
+                You are the CEO, therefore your request will be approved automatically, if your inputs are valid and
+                within
+                constraints.
+            </div>
+            <div th:if="${!teamLeaders.isEmpty() or superior != null}">
+                Additionally, all the employees you report to have to accept your request for the leave to be considered
+                valid.
+                These people are:<br><br>
+                <div th:if="${!teamLeaders.isEmpty()}">
+                    Your team leader(s): <br>
+                    <ul>
+                        <li th:each="leader: ${teamLeaders}">
+                            <b><span th:text="${leader.getEmployee().getGivenName()}"></span>&nbsp;<span
+                                    th:text="${leader.getEmployee().getFamilyName()}"></span></b>&nbsp;(<span
+                                th:text="${leader.getEmployee().getEmail()}"></span>)
+                        </li>
+                    </ul>
+                </div>
+                <div th:if="${superior != null}">
+                    Your manager: <br>
+                    <ul>
+                        <li>
+                            <b><span th:text="${superior.getEmployee().getGivenName()}"></span>&nbsp;<span
+                                    th:text="${superior.getEmployee().getFamilyName()}"></span></b>&nbsp;(<span
+                                th:text="${superior.getEmployee().getEmail()}"></span>)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="control">
+            <input class="mdc-button mdc-button--raised" type="submit">
+            <a class="mdc-button mdc-button--raised" href="/dashboard">
+                <span class="mdc-button__label sign-out-label">CANCEL</span>
+            </a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

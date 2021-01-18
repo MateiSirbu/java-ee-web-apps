@@ -3,17 +3,17 @@ package eu.msirbu.tw.tema3.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "manager")
+@Table(name = "Manager")
 public class Manager {
     @Id
-    @Column(name = "id_employee")
+    @Column(name = "idEmployee")
     private int id;
     @OneToOne
-    @JoinColumn(name = "id_employee")
+    @JoinColumn(name = "idEmployee")
     private Employee employee;
-    @OneToOne
-    @JoinColumn(name = "id_superior")
-    private Employee superior;
+    @ManyToOne
+    @JoinColumn(name = "idSuperior")
+    private Manager superior;
 
     public Manager() {
         super();
@@ -27,7 +27,7 @@ public class Manager {
         return employee;
     }
 
-    public Employee getSuperior() {
+    public Manager getSuperior() {
         return superior;
     }
 
@@ -39,7 +39,16 @@ public class Manager {
         this.employee = employee;
     }
 
-    public void setSuperior(Employee superior) {
+    public void setSuperior(Manager superior) {
         this.superior = superior;
+    }
+
+    @Override
+    public String toString() {
+        return "Manager{" +
+                "id=" + id +
+                ", employee=" + employee +
+                ", superior=" + superior +
+                '}';
     }
 }

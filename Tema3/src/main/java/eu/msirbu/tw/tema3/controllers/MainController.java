@@ -53,21 +53,6 @@ public class MainController {
         return "index";
     }
 
-
-    @GetMapping("/review")
-    public String getReviewPage(Model model, OAuth2AuthenticationToken authenticationToken) {
-        try {
-            getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
-            Employee employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
-            Manager manager = managerService.getManagerById(employee.getId());
-        } catch (NotFoundException e) {
-            return getNotEnrolledErrorPage(model);
-        } catch (NotAManagerException e) {
-            System.out.println("NOT A MANAGER!");
-        }
-        return "review";
-    }
-
     @GetMapping("/public-holidays")
     public String getPublicHolidaysPage(Model model, OAuth2AuthenticationToken authenticationToken) {
         List<PublicHoliday> publicHolidayList;

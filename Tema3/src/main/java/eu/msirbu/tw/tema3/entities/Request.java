@@ -4,12 +4,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Entity
 @Table(name = "Request")
-public class Request implements Serializable {
+public class Request implements Serializable, Comparable<Request> {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,6 +55,14 @@ public class Request implements Serializable {
 
     public LocalDate getStartDate() {
         return startDate;
+    }
+
+    public String getFormattedStartDate() {
+        return startDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy"));
+    }
+
+    public String getFormattedEndDate() {
+        return endDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy"));
     }
 
     public Employee getEmployee() {
@@ -103,5 +112,10 @@ public class Request implements Serializable {
 
     public void setApprovals(List<Approval> approvals) {
         this.approvals = approvals;
+    }
+
+    @Override
+    public int compareTo(Request o) {
+        return getStartDate().compareTo(o.getStartDate());
     }
 }

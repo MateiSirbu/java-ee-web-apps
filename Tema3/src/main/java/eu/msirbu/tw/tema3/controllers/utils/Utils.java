@@ -96,7 +96,14 @@ public class Utils {
     }
     public static String getInvalidDateSetTooEarlyErrorPage(Model model) {
         model.addAttribute("errorHeadline", "Invalid dates.");
-        model.addAttribute("errorDetails", "The effective date should be set no earlier than two days in the future.");
+        model.addAttribute("errorDetails", "The effective date should be set no earlier than five days in the future.");
+        model.addAttribute("errorAnchorHref", "/request");
+        model.addAttribute("errorAnchorText", "BACK TO THE REQUEST FORM");
+        return "error";
+    }
+    public static String getInvalidDateSetTooLateErrorPage(Model model) {
+        model.addAttribute("errorHeadline", "Invalid dates.");
+        model.addAttribute("errorDetails", "The 'until' date should be set no later than six months in the future.");
         model.addAttribute("errorAnchorHref", "/request");
         model.addAttribute("errorAnchorText", "BACK TO THE REQUEST FORM");
         return "error";
@@ -118,7 +125,7 @@ public class Utils {
     public static String getQuotaLimitReachedErrorPage(Model model) {
         model.addAttribute("errorHeadline", "Quota limit reached.");
         model.addAttribute("errorDetails", "You can no longer submit requests because your vacation quota limit has been reached.");
-        model.addAttribute("errorAnchorHref", "/");
+        model.addAttribute("errorAnchorHref", "/dashboard");
         model.addAttribute("errorAnchorText", "BACK TO THE DASHBOARD");
         return "error";
     }

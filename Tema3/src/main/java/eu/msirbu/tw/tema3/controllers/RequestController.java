@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,8 @@ import static eu.msirbu.tw.tema3.controllers.utils.Utils.*;
 
 @Controller
 public class RequestController {
+
+    /* Autowired services */
 
     private OAuth2AuthorizedClientService authorizedClientService;
     private EmployeeService employeeService;
@@ -80,11 +81,11 @@ public class RequestController {
         try {
             getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
             employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
-            int remainingVacationDays = employee.getRemainingVacationDays(publicHolidayService);
-            if (remainingVacationDays == 0)
+            int requestableVacationDays = employee.getRequestableVacationDays(publicHolidayService);
+            if (requestableVacationDays == 0)
                 return getQuotaLimitReachedErrorPage(model);
-            model.addAttribute("remainingDays", remainingVacationDays);
-            model.addAttribute("requestableDays", employee.getRequestableVacationDays(publicHolidayService));
+            model.addAttribute("remainingDays", employee.getRemainingVacationDays(publicHolidayService));
+            model.addAttribute("requestableDays", requestableVacationDays);
             model.addAttribute("approvedDays", employee.getApprovedDays(publicHolidayService));
             model.addAttribute("pendingDays", employee.getPendingDays(publicHolidayService));
             model.addAttribute("quota", employee.getVacationDayQuota());
@@ -120,13 +121,20 @@ public class RequestController {
             return getInvalidDateOrderErrorPage(model);
         }
 
-        // if 'effective' date is set earlier than two days in the future, abort, since it would be declined anyway
-        if (effective.isBefore(LocalDate.now().plus(2, ChronoUnit.DAYS))) {
+        // if 'effective' date is set earlier than five days in the future, abort
+        if (effective.isBefore(LocalDate.now().plus(5, ChronoUnit.DAYS))) {
             return getInvalidDateSetTooEarlyErrorPage(model);
         }
 
+        // if 'until' date is set later than six months in the future, abort
+        if (until.isAfter(LocalDate.now().plus(6, ChronoUnit.MONTHS))) {
+            return getInvalidDateSetTooLateErrorPage(model);
+        }
+
+        final long NUMBER_OF_SELECTED_VACATION_DAYS = ChronoUnit.DAYS.between(effective, until.plusDays(1)) - countExemptDays(effective, until, publicHolidayService);
+
         // if the range is empty or the dates inside the range are all exempt from being counted towards the quota, abort
-        if (effective.equals(until) || countExemptDays(effective, until, publicHolidayService) == Period.between(effective, until.plusDays(1)).getDays()) {
+        if (NUMBER_OF_SELECTED_VACATION_DAYS == 0) {
             return getInvalidDateEmptyRangePage(model);
         }
 
@@ -153,7 +161,7 @@ public class RequestController {
             }
 
             // if the selected period exceeds quota, abort
-            if (Period.between(effective, until.plusDays(1)).getDays() > employee.getRequestableVacationDays(publicHolidayService))
+            if (NUMBER_OF_SELECTED_VACATION_DAYS > employee.getRequestableVacationDays(publicHolidayService))
                 return getExceededQuotaErrorPage(model);
 
             // if data entered is within constraints, attempt form submission:

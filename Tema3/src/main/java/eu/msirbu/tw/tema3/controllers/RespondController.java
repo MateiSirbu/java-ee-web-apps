@@ -45,10 +45,10 @@ public class RespondController {
             Employee employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
             manager = managerService.getManagerById(employee.getId());
         } catch (NotFoundException e) {
-            return getUserNotEnrolledPage(model);
+            return getNotEnrolledErrorPage(model);
         }
         catch (NotAManagerException e) {
-            return getUserNotAManagerPage(model);
+            return getNotAManagerErrorPage(model);
         }
         return "respond";
     }

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 import static eu.msirbu.tw.tema3.controllers.utils.ControllerUtils.getLoginInfo;
-import static eu.msirbu.tw.tema3.controllers.utils.ControllerUtils.getUserNotEnrolledPage;
+import static eu.msirbu.tw.tema3.controllers.utils.ControllerUtils.getNotEnrolledErrorPage;
 
 @Controller
 public class MainController {
@@ -61,7 +61,7 @@ public class MainController {
             Employee employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
             Manager manager = managerService.getManagerById(employee.getId());
         } catch (NotFoundException e) {
-            return getUserNotEnrolledPage(model);
+            return getNotEnrolledErrorPage(model);
         } catch (NotAManagerException e) {
             System.out.println("NOT A MANAGER!");
         }
@@ -75,7 +75,7 @@ public class MainController {
             getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
             publicHolidayList = publicHolidayService.getAllPublicHolidays();
         } catch (NotFoundException e) {
-            return getUserNotEnrolledPage(model);
+            return getNotEnrolledErrorPage(model);
         }
         model.addAttribute("holidays", publicHolidayList);
         return "public-holidays";
@@ -91,7 +91,7 @@ public class MainController {
             model.addAttribute("remainingVacationDays", employee.getVacationDayQuota());
             manager = managerService.getManagerById(employee.getId());
         } catch (NotFoundException e) {
-            return getUserNotEnrolledPage(model);
+            return getNotEnrolledErrorPage(model);
         } catch (NotAManagerException e) {
             manager = null;
         }

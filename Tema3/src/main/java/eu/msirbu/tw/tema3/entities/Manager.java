@@ -43,12 +43,4 @@ public class Manager {
         this.superior = superior;
     }
 
-    @Override
-    public String toString() {
-        return "Manager{" +
-                "id=" + id +
-                ", employee=" + employee +
-                ", superior=" + superior +
-                '}';
-    }
 }

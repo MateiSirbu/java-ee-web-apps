@@ -1,27 +1,45 @@
 package eu.msirbu.tw.tema3.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "Request")
-public class Request {
+public class Request implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idEmployee")
     private Employee employee;
-    @Column(name = "description")
-    private String description;
+
+    @NotNull
     @Column(name = "startDate", columnDefinition = "DATE")
     private LocalDate startDate;
+
+    @NotNull
     @Column(name = "endDate", columnDefinition = "DATE")
     private LocalDate endDate;
 
+    @OneToMany(mappedBy="request", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Approval> approvals;
+
     public Request() {
         super();
+    }
+
+    public Request(Employee employee, LocalDate startDate, LocalDate endDate) {
+        this.employee = employee;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public int getId() {
@@ -40,16 +58,12 @@ public class Request {
         return employee;
     }
 
-    public String getDescription() {
-        return description;
+    public List<Approval> getApprovals() {
+        return approvals;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public void setEndDate(LocalDate endDate) {
@@ -64,14 +78,7 @@ public class Request {
         this.startDate = startDate;
     }
 
-    @Override
-    public String toString() {
-        return "Request{" +
-                "id=" + id +
-                ", employee=" + employee +
-                ", description='" + description + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                '}';
+    public void setApprovals(List<Approval> approvals) {
+        this.approvals = approvals;
     }
 }

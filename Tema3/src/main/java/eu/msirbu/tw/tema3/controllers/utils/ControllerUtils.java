@@ -31,14 +31,14 @@ public class ControllerUtils {
             employeeService.getEmployeeByEmail((String) userAttributes.get("email"));
         }
     }
-    public static String getUserNotEnrolledPage(Model model) {
+    public static String getNotEnrolledErrorPage(Model model) {
         model.addAttribute("errorHeadline", "You are not authorized to view this resource.");
         model.addAttribute("errorDetails", "You are signed in via Contoso's Azure AD, but this user is not enrolled in Vacations@Contoso.");
         model.addAttribute("errorAnchorHref", "/");
         model.addAttribute("errorAnchorText", "BACK TO THE HOMEPAGE");
         return "error";
     }
-    public static String getUserNotAManagerPage(Model model) {
+    public static String getNotAManagerErrorPage(Model model) {
         model.addAttribute("errorHeadline", "You are not authorized to view this resource.");
         model.addAttribute("errorDetails", "You are signed in via Contoso's Azure AD, but you cannot respond to requests since you are not a manager.");
         model.addAttribute("errorAnchorHref", "/dashboard");

@@ -1,5 +1,8 @@
 package eu.msirbu.tw.tema3.entities;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,18 +12,27 @@ public class Approval {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @ManyToOne
-    @JoinColumn(name = "idRequest")
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idRequest", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Request request;
+
     @ManyToOne
     @JoinColumn(name = "idManager")
     private Employee manager;
+
     @ManyToOne
     @JoinColumn(name="idStatus")
     private Status status;
 
     public Approval() {
         super();
+    }
+
+    public Approval(Employee manager, Status status) {
+        this.manager = manager;
+        this.status = status;
     }
 
     public int getId() {
@@ -55,13 +67,4 @@ public class Approval {
         this.request = request;
     }
 
-    @Override
-    public String toString() {
-        return "Approval{" +
-                "id=" + id +
-                ", request=" + request +
-                ", manager=" + manager +
-                ", status=" + status +
-                '}';
-    }
 }

@@ -47,13 +47,4 @@ public class PublicHoliday {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
-    @Override
-    public String toString() {
-        return "PublicHoliday{" +
-                "id=" + id +
-                ", date=" + date +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

@@ -105,16 +105,4 @@ public class Employee {
         this.teams = teams;
     }
 
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", givenName='" + givenName + '\'' +
-                ", familyName='" + familyName + '\'' +
-                ", email='" + email + '\'' +
-                ", requests=" + requests +
-                ", vacationDayQuota=" + vacationDayQuota +
-                ", teams=" + getTeamNames() +
-                '}';
-    }
 }

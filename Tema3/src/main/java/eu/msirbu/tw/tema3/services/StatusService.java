@@ -4,10 +4,12 @@ import eu.msirbu.tw.tema3.entities.Status;
 import eu.msirbu.tw.tema3.exceptions.NotFoundException;
 import eu.msirbu.tw.tema3.repositories.StatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class StatusService {
     private final StatusRepository statusRepository;
 

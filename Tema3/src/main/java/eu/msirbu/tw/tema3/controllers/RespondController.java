@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import static eu.msirbu.tw.tema3.controllers.utils.ControllerUtils.*;
+import static eu.msirbu.tw.tema3.controllers.utils.Utils.*;
 
 @Controller
 public class RespondController {

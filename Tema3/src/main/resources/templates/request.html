@@ -28,6 +28,11 @@
 </div>
 <div class="page-content-navbar-constrained">
     <h1>Request a vacation</h1>
+    <div class="control">
+        You can request <b><span th:text="${requestableDays}"></span></b> days off out of your <b><span th:text="${remainingDays}"></span></b> remaining vacation days.<br>
+        (Your quota is set at <b><span th:text="${quota}"></span></b> days.
+        <b><span th:text="${approvedDays}"></span></b> days have been approved, <b><span th:text="${pendingDays}"></span></b> days are pending approval.)
+    </div>
     <form name="form" th:action="@{/request_submit}" method="post">
         <div class="control">
             You would like to be out-of-office,

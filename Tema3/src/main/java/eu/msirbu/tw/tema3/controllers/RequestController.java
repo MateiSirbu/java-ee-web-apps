@@ -1,30 +1,29 @@
 package eu.msirbu.tw.tema3.controllers;
 
-import eu.msirbu.tw.tema3.entities.Approval;
-import eu.msirbu.tw.tema3.entities.Employee;
-import eu.msirbu.tw.tema3.entities.Manager;
-import eu.msirbu.tw.tema3.entities.Request;
+import eu.msirbu.tw.tema3.entities.*;
 import eu.msirbu.tw.tema3.exceptions.NotAManagerException;
 import eu.msirbu.tw.tema3.exceptions.NotFoundException;
-import eu.msirbu.tw.tema3.services.EmployeeService;
-import eu.msirbu.tw.tema3.services.ManagerService;
-import eu.msirbu.tw.tema3.services.RequestService;
+import eu.msirbu.tw.tema3.services.*;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
-import static eu.msirbu.tw.tema3.controllers.utils.ControllerUtils.*;
+import static eu.msirbu.tw.tema3.controllers.utils.Utils.*;
 
 @Controller
 public class RequestController {
@@ -33,6 +32,8 @@ public class RequestController {
     private EmployeeService employeeService;
     private ManagerService managerService;
     private RequestService requestService;
+    private StatusService statusService;
+    private PublicHolidayService publicHolidayService;
 
     @Autowired
     public void setAuthorizedClientService(OAuth2AuthorizedClientService authorizedClientService) {
@@ -54,9 +55,22 @@ public class RequestController {
         this.requestService = requestService;
     }
 
+    @Autowired
+    public void setStatusService(StatusService statusService) {
+        this.statusService = statusService;
+    }
+
+    @Autowired
+    public void setPublicHolidayService(PublicHolidayService publicHolidayService) {
+        this.publicHolidayService = publicHolidayService;
+    }
+
+    /**
+     * Request form endpoint.
+     */
     @GetMapping("/request")
     public String getRequestPage(Model model, OAuth2AuthenticationToken authenticationToken) {
-        Manager manager;
+        Manager employeeAsManager;
         Employee employee;
         LocalDate effectiveDate, untilDate;
         effectiveDate = LocalDate.now().plus(1, ChronoUnit.WEEKS);
@@ -66,32 +80,115 @@ public class RequestController {
         try {
             getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
             employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
+            int remainingVacationDays = employee.getRemainingVacationDays(publicHolidayService);
+            if (remainingVacationDays == 0)
+                return getQuotaLimitReachedErrorPage(model);
+            model.addAttribute("remainingDays", remainingVacationDays);
+            model.addAttribute("requestableDays", employee.getRequestableVacationDays(publicHolidayService));
+            model.addAttribute("approvedDays", employee.getApprovedDays(publicHolidayService));
+            model.addAttribute("pendingDays", employee.getPendingDays(publicHolidayService));
+            model.addAttribute("quota", employee.getVacationDayQuota());
             model.addAttribute("teamLeaders", employee.getSuperiors());
-            manager = managerService.getManagerById(employee.getId());
+            employeeAsManager = managerService.getManagerById(employee.getId());
         } catch (NotFoundException e) {
             return getNotEnrolledErrorPage(model);
         } catch (NotAManagerException e) {
             return "request";
         }
-        model.addAttribute("superior", manager.getSuperior());
+        model.addAttribute("superior", employeeAsManager.getSuperior());
         return "request";
     }
 
+    /**
+     * Displays an error page if the dates entered are not ISO 8601 compliant.
+     */
+    @ExceptionHandler(TypeMismatchException.class)
+    public ModelAndView handleTypeMismatchException(TypeMismatchException e) {
+        return getInvalidDateFormatErrorPage();
+    }
+
+    /**
+     * Request form submission endpoint.
+     */
     @PostMapping("/request_submit")
-    public String submitForm(Model model, @ModelAttribute(value="effectiveDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate effective, @ModelAttribute(value="untilDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate until, OAuth2AuthenticationToken authenticationToken) {
+    public String submitForm(Model model, @ModelAttribute(value = "effectiveDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate effective, @ModelAttribute(value = "untilDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate until, OAuth2AuthenticationToken authenticationToken) {
+        Request requestToSubmit = null;
+        List<Approval> newApprovals = new ArrayList<>();
+
+        // if 'effective' date is set later than 'until' date, abort
+        if (effective.isAfter(until)) {
+            return getInvalidDateOrderErrorPage(model);
+        }
+
+        // if 'effective' date is set earlier than two days in the future, abort, since it would be declined anyway
+        if (effective.isBefore(LocalDate.now().plus(2, ChronoUnit.DAYS))) {
+            return getInvalidDateSetTooEarlyErrorPage(model);
+        }
+
+        // if the range is empty or the dates inside the range are all exempt from being counted towards the quota, abort
+        if (effective.equals(until) || countExemptDays(effective, until, publicHolidayService) == Period.between(effective, until.plusDays(1)).getDays()) {
+            return getInvalidDateEmptyRangePage(model);
+        }
+
+        // user-agnostic parameters are valid, retrieving user profile and verifying eligibility:
         try {
+            final Status PENDING = statusService.getStatusByName("PENDING");
+            final Status APPROVED = statusService.getStatusByName("APPROVED");
+
+            // validate credentials
             getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
+
+            // get employee info
             Employee employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
-            Request request = new Request(employee, effective, until);
-            List<Manager> superiors = employee.getSuperiors();
-            for (Manager superior: superiors) {
-                request.getApprovals().add(new Approval(superior, ))
+            requestToSubmit = new Request(employee, effective, until);
+
+            // get existing requests; if they overlap with this one, abort
+            List<Request> existingRequests = employee.getRequests();
+            for (Request existingRequest: existingRequests) {
+                final boolean isOverlapping = requestToSubmit.getStartDate().isBefore(existingRequest.getEndDate()) && existingRequest.getStartDate().isBefore(requestToSubmit.getEndDate());
+                final boolean isApproved = (existingRequest.getAggregatedStatus().equals(APPROVED));
+                final boolean isPending = (existingRequest.getAggregatedStatus().equals(PENDING));
+                if (isOverlapping && (isApproved || isPending))
+                    return getInvalidDateOverlapErrorPage(model);
             }
-            requestService.addRequest(request);
-        }
-        catch (NotFoundException e) {
+
+            // if the selected period exceeds quota, abort
+            if (Period.between(effective, until.plusDays(1)).getDays() > employee.getRequestableVacationDays(publicHolidayService))
+                return getExceededQuotaErrorPage(model);
+
+            // if data entered is within constraints, attempt form submission:
+
+            // get team leaders and request their approval
+            List<Manager> superiors = employee.getSuperiors();
+            for (Manager superior : superiors) {
+                newApprovals.add(new Approval(requestToSubmit, superior, PENDING));
+            }
+
+            // get employee info as the manager (if possible, user might be a regular employee)
+            Manager employeeAsManager = managerService.getManagerById(employee.getId());
+
+            // if CEO, approve request automatically
+            if (superiors.size() == 0 && employeeAsManager.getSuperior() == null) {
+                newApprovals.add(new Approval(requestToSubmit, employeeAsManager, APPROVED));
+                requestToSubmit.setApprovals(newApprovals);
+                requestService.addRequest(requestToSubmit);
+                return getRequestSuccessCEOPage(model);
+            }
+
+            // otherwise, request approval from all superiors
+            newApprovals.add(new Approval(requestToSubmit, employeeAsManager.getSuperior(), PENDING));
+            requestToSubmit.setApprovals(newApprovals);
+            requestService.addRequest(requestToSubmit);
+
+        // if user is in Active Directory but not in database, deny access
+        } catch (NotFoundException e) {
             return getNotEnrolledErrorPage(model);
+        // if user is not a manager, request approval from team leaders only
+        } catch (NotAManagerException e) {
+            requestToSubmit.setApprovals(newApprovals);
+            requestService.addRequest(requestToSubmit);
         }
+        // if all goes well, show a smiley face :)
         return getRequestSuccessPage(model);
     }
 }

@@ -1,20 +1,27 @@
 package eu.msirbu.tw.tema3.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "Team")
-public class Team {
+public class Team implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+
     @Column(name = "name")
     private String name;
+
     @OneToOne
     @JoinColumn(name = "idLeader")
     private Manager leader;
+
     @ManyToMany(mappedBy = "teams")
     private List<Employee> members;
 

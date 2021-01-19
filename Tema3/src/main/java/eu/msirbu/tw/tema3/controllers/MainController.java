@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-import static eu.msirbu.tw.tema3.controllers.utils.ControllerUtils.getLoginInfo;
-import static eu.msirbu.tw.tema3.controllers.utils.ControllerUtils.getNotEnrolledErrorPage;
+import static eu.msirbu.tw.tema3.controllers.utils.Utils.getLoginInfo;
+import static eu.msirbu.tw.tema3.controllers.utils.Utils.getNotEnrolledErrorPage;
 
 @Controller
 public class MainController {
@@ -88,7 +88,11 @@ public class MainController {
             getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
             Employee employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
             System.out.println(employee.getTeams());
-            model.addAttribute("remainingVacationDays", employee.getVacationDayQuota());
+            model.addAttribute("remainingDays", employee.getRemainingVacationDays(publicHolidayService));
+            model.addAttribute("requestableDays", employee.getRequestableVacationDays(publicHolidayService));
+            model.addAttribute("approvedDays", employee.getApprovedDays(publicHolidayService));
+            model.addAttribute("pendingDays", employee.getPendingDays(publicHolidayService));
+            model.addAttribute("quota", employee.getVacationDayQuota());
             manager = managerService.getManagerById(employee.getId());
         } catch (NotFoundException e) {
             return getNotEnrolledErrorPage(model);

@@ -1,26 +1,26 @@
 package eu.msirbu.tw.tema3.entities;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "Approval")
-public class Approval {
+public class Approval implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idRequest", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade=CascadeType.ALL)
+    @JoinColumn(name = "idRequest")
     private Request request;
 
     @ManyToOne
     @JoinColumn(name = "idManager")
-    private Employee manager;
+    private Manager manager;
 
     @ManyToOne
     @JoinColumn(name="idStatus")
@@ -30,7 +30,8 @@ public class Approval {
         super();
     }
 
-    public Approval(Employee manager, Status status) {
+    public Approval(Request request, Manager manager, Status status) {
+        this.request = request;
         this.manager = manager;
         this.status = status;
     }
@@ -39,7 +40,7 @@ public class Approval {
         return id;
     }
 
-    public Employee getManager() {
+    public Manager getManager() {
         return manager;
     }
 
@@ -55,7 +56,7 @@ public class Approval {
         this.id = id;
     }
 
-    public void setManager(Employee manager) {
+    public void setManager(Manager manager) {
         this.manager = manager;
     }
 

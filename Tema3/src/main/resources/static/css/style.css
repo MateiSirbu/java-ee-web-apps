@@ -110,3 +110,8 @@ img {
     text-overflow: ellipsis;
     width: 100%;
 }
+
+.status-with-icon {
+    display: flex;
+    align-items: center;
+}

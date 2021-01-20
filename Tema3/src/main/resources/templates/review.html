@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="en">
 <head>
     <title>Vacations@Contoso - Review your requests</title>
-    <link rel="stylesheet" type="text/css" href="./css/material-components-web.min.css"/>
-    <link rel="stylesheet" href="./css/material-icons.css"/>
-    <link rel="stylesheet" href="./css/roboto.css">
-    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="css/material-components-web.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/material-icons.css"/>
+    <link rel="stylesheet" type="text/css" href="css/roboto.css">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 </head>
 <body class="mdc-typography">
@@ -28,6 +28,12 @@
 </div>
 <div class="page-content-navbar-constrained">
     <h1>Review your requests</h1>
+    <div class="control">
+        <a href="/dashboard" class="mdc-button mdc-button--raised">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_back</i>
+            <span class="mdc-button__label">BACK TO DASHBOARD</span>
+        </a>
+    </div>
     <div class="mdc-data-table">
         <div class="mdc-data-table__table-container">
             <table class="mdc-data-table__table" aria-label="Dessert calories">
@@ -42,7 +48,20 @@
                 <tr th:each="request: ${requests}" class="mdc-data-table__row">
                     <th th:text="${request.getFormattedStartDate()}" class="mdc-data-table__cell" scope="row"></th>
                     <td th:text="${request.getFormattedEndDate()}" class="mdc-data-table__cell"></td>
-                    <td th:text="${request.getAggregatedStatus().getName()}" class="mdc-data-table__cell"></td>
+                    <td class="mdc-data-table__cell">
+                        <div class="status-with-icon">
+                            <i th:if="${request.getAggregatedStatus().getName().equals('APPROVED')}"
+                               class="material-icons"
+                               aria-hidden="true">check</i>
+                            <i th:if="${request.getAggregatedStatus().getName().equals('DECLINED')}"
+                               class="material-icons"
+                               aria-hidden="true">close</i>
+                            <i th:if="${request.getAggregatedStatus().getName().equals('PENDING')}"
+                               class="material-icons"
+                               aria-hidden="true">hourglass_empty</i>
+                            <span th:text="${request.getAggregatedStatus().getName()}"></span>
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>

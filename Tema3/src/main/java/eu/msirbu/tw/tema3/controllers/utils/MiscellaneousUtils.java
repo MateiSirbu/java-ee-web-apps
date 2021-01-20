@@ -1,6 +1,5 @@
 package eu.msirbu.tw.tema3.controllers.utils;
 
-import eu.msirbu.tw.tema3.exceptions.NotFoundException;
 import eu.msirbu.tw.tema3.services.EmployeeService;
 import eu.msirbu.tw.tema3.services.PublicHolidayService;
 import org.springframework.http.HttpEntity;
@@ -20,9 +19,9 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
-public class Utils {
+public class MiscellaneousUtils {
 
-    public static void getLoginInfo(Model model, OAuth2AuthenticationToken authenticationToken, OAuth2AuthorizedClientService authorizedClientService, EmployeeService employeeService) throws NotFoundException {
+    public static void getLoginInfo(Model model, OAuth2AuthenticationToken authenticationToken, OAuth2AuthorizedClientService authorizedClientService, EmployeeService employeeService) {
         OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(authenticationToken.getAuthorizedClientRegistrationId(), authenticationToken.getName());
         String userInfoEndpointUri = client.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
         if (!StringUtils.isEmpty(userInfoEndpointUri)) {
@@ -62,20 +61,6 @@ public class Utils {
         model.addAttribute("errorAnchorHref", "/dashboard");
         model.addAttribute("errorAnchorText", "BACK TO THE DASHBOARD");
         return "error";
-    }
-    public static String getRequestSuccessPage(Model model) {
-        model.addAttribute("successHeadline", "Request sent.");
-        model.addAttribute("successDetails", "You request has been submitted successfully.");
-        model.addAttribute("successAnchorHref", "/dashboard");
-        model.addAttribute("successAnchorText", "BACK TO THE DASHBOARD");
-        return "success";
-    }
-    public static String getRequestSuccessCEOPage(Model model) {
-        model.addAttribute("successHeadline", "Request accepted.");
-        model.addAttribute("successDetails", "Your request has been submitted and accepted.");
-        model.addAttribute("successAnchorHref", "/dashboard");
-        model.addAttribute("successAnchorText", "BACK TO THE DASHBOARD");
-        return "success";
     }
     public static ModelAndView getInvalidDateFormatErrorPage() {
         ModelAndView mav = new ModelAndView();
@@ -149,5 +134,33 @@ public class Utils {
         model.addAttribute("errorAnchorHref", "/review-subordinates");
         model.addAttribute("errorAnchorText", "BACK TO SUBORDINATES' REQUESTS");
         return "error";
+    }
+    public static String getResponseSentDuplicateErrorPage(Model model) {
+        model.addAttribute("errorHeadline", "Cannot submit response.");
+        model.addAttribute("errorDetails", "You have already submitted a response to this request.");
+        model.addAttribute("errorAnchorHref", "/review-subordinates");
+        model.addAttribute("errorAnchorText", "BACK TO SUBORDINATES' REQUESTS");
+        return "error";
+    }
+    public static String getRequestSuccessPage(Model model) {
+        model.addAttribute("successHeadline", "Request sent.");
+        model.addAttribute("successDetails", "You request has been submitted successfully.");
+        model.addAttribute("successAnchorHref", "/dashboard");
+        model.addAttribute("successAnchorText", "BACK TO THE DASHBOARD");
+        return "success";
+    }
+    public static String getRequestSuccessCEOPage(Model model) {
+        model.addAttribute("successHeadline", "Request accepted.");
+        model.addAttribute("successDetails", "Your request has been submitted and accepted.");
+        model.addAttribute("successAnchorHref", "/dashboard");
+        model.addAttribute("successAnchorText", "BACK TO THE DASHBOARD");
+        return "success";
+    }
+    public static String getResponseSentSuccessPage(Model model) {
+        model.addAttribute("successHeadline", "Response sent.");
+        model.addAttribute("successDetails", "Your response has been submitted successfully.");
+        model.addAttribute("successAnchorHref", "/review-subordinates");
+        model.addAttribute("successAnchorText", "BACK TO SUBORDINATES' REQUESTS");
+        return "success";
     }
 }

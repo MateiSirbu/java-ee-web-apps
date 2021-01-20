@@ -9,7 +9,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-import static eu.msirbu.tw.tema3.controllers.utils.Utils.countExemptDays;
+import static eu.msirbu.tw.tema3.controllers.utils.MiscellaneousUtils.countExemptDays;
 
 @Entity
 @Table(name = "Employee")

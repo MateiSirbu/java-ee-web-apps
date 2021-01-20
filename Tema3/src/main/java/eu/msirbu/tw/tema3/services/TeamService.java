@@ -1,13 +1,13 @@
 package eu.msirbu.tw.tema3.services;
 
 import eu.msirbu.tw.tema3.entities.Team;
-import eu.msirbu.tw.tema3.exceptions.NotFoundException;
 import eu.msirbu.tw.tema3.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TeamService {
@@ -24,15 +24,11 @@ public class TeamService {
         return teamList;
     }
 
-    public Team getTeamById(int statusId) throws NotFoundException {
-        return this.teamRepository
-                .findById(statusId)
-                .orElseThrow(() -> new NotFoundException("Cannot find Team with id " + statusId + "."));
+    public Optional<Team> getTeamById(int statusId)  {
+        return this.teamRepository.findById(statusId);
     }
 
-    public Team getTeamByName(String statusName) throws NotFoundException {
-        return this.teamRepository
-                .findTeamByName(statusName)
-                .orElseThrow(() -> new NotFoundException("Cannot find Team with name " + statusName + "."));
+    public Optional<Team> getTeamByName(String statusName)  {
+        return this.teamRepository.findTeamByName(statusName);
     }
 }

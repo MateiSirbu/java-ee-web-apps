@@ -3,11 +3,11 @@ package eu.msirbu.tw.tema3.controllers;
 import eu.msirbu.tw.tema3.entities.Approval;
 import eu.msirbu.tw.tema3.entities.Employee;
 import eu.msirbu.tw.tema3.entities.Manager;
-import eu.msirbu.tw.tema3.exceptions.NotAManagerException;
-import eu.msirbu.tw.tema3.exceptions.NotFoundException;
+import eu.msirbu.tw.tema3.entities.Status;
 import eu.msirbu.tw.tema3.services.ApprovalService;
 import eu.msirbu.tw.tema3.services.EmployeeService;
 import eu.msirbu.tw.tema3.services.ManagerService;
+import eu.msirbu.tw.tema3.services.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static eu.msirbu.tw.tema3.controllers.utils.Utils.*;
+import static eu.msirbu.tw.tema3.controllers.utils.MiscellaneousUtils.*;
 
 @Controller
 public class RespondController {
@@ -29,6 +29,7 @@ public class RespondController {
     private EmployeeService employeeService;
     private ManagerService managerService;
     private ApprovalService approvalService;
+    private StatusService statusService;
 
     @Autowired
     public void setAuthorizedClientService(OAuth2AuthorizedClientService authorizedClientService) {
@@ -50,52 +51,103 @@ public class RespondController {
         this.approvalService = approvalService;
     }
 
+    @Autowired
+    public void setStatusService(StatusService statusService) {
+        this.statusService = statusService;
+    }
 
     @GetMapping("/review-subordinates")
     public String getReviewSubordinatesPage(Model model, OAuth2AuthenticationToken authenticationToken) {
-        try {
-            getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
-            Employee employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
-            Manager manager = managerService.getManagerById(employee.getId());
-            List<Approval> approvals = manager.getApprovals();
+        getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
+        Optional<Employee> employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
+        if (employee.isPresent()) {
+            Optional<Manager> manager = managerService.getManagerById(employee.get().getId());
+            if (!manager.isPresent()) {
+                return getNotAManagerErrorPage(model);
+            }
+            List<Approval> approvals = manager.get().getApprovals();
             approvals.sort(Collections.reverseOrder());
             model.addAttribute("approvals", approvals);
-        } catch (NotFoundException e) {
-            return getNotEnrolledErrorPage(model);
+            return "review-subordinates";
         }
-        catch (NotAManagerException e) {
-            return getNotAManagerErrorPage(model);
+        return getNotEnrolledErrorPage(model);
+    }
+
+    @GetMapping(path = "/respond/approve/{id}")
+    public String getRespondApprovePage(@PathVariable(value = "id") int approvalId, Model model, OAuth2AuthenticationToken authenticationToken) {
+        @SuppressWarnings("OptionalGetWithoutIsPresent") final Status APPROVED = statusService.getStatusByName("APPROVED").get();
+        getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
+        Optional<Employee> employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
+        if (employee.isPresent()) {
+            Optional<Approval> approval = approvalService.getApprovalById(approvalId);
+            Optional<Manager> manager = managerService.getManagerById(employee.get().getId());
+            if (!manager.isPresent()) {
+                return getNotAManagerErrorPage(model);
+            }
+            if (!approval.isPresent()) {
+                return getApprovalNotFoundErrorPage(model);
+            }
+            if (approval.get().getManager().getId() != manager.get().getId()) {
+                return getApprovalNotSuperiorOfRequesterErrorPage(model);
+            }
+            if (!approval.get().getStatus().equals(new Status("PENDING"))) {
+                return getResponseSentDuplicateErrorPage(model);
+            }
+            approvalService.updateApprovalStatus(approval.get(), APPROVED);
+            return getResponseSentSuccessPage(model);
         }
-        return "review-subordinates";
+        return getNotEnrolledErrorPage(model);
+    }
+
+    @GetMapping(path = "/respond/decline/{id}")
+    public String getRespondDeclinePage(@PathVariable(value = "id") int approvalId, Model model, OAuth2AuthenticationToken authenticationToken) {
+        @SuppressWarnings("OptionalGetWithoutIsPresent") final Status DECLINED = statusService.getStatusByName("DECLINED").get();
+        getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
+        Optional<Employee> employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
+        if (employee.isPresent()) {
+            Optional<Approval> approval = approvalService.getApprovalById(approvalId);
+            Optional<Manager> manager = managerService.getManagerById(employee.get().getId());
+            if (!manager.isPresent()) {
+                return getNotAManagerErrorPage(model);
+            }
+            if (!approval.isPresent()) {
+                return getApprovalNotFoundErrorPage(model);
+            }
+            if (approval.get().getManager().getId() != manager.get().getId()) {
+                return getApprovalNotSuperiorOfRequesterErrorPage(model);
+            }
+            if (!approval.get().getStatus().equals(new Status("PENDING"))) {
+                return getResponseSentDuplicateErrorPage(model);
+            }
+            approvalService.updateApprovalStatus(approval.get(), DECLINED);
+            return getResponseSentSuccessPage(model);
+        }
+        return getNotEnrolledErrorPage(model);
     }
 
     @GetMapping(path = "/respond/{id}")
     public String getRespondPage(@PathVariable(value = "id") int approvalId, Model model, OAuth2AuthenticationToken authenticationToken) {
-        Manager manager;
-        try {
-            getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
-            Employee employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
-            manager = managerService.getManagerById(employee.getId());
+        getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
+        Optional<Employee> employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
+        if (employee.isPresent()) {
             Optional<Approval> approval = approvalService.getApprovalById(approvalId);
             if (!approval.isPresent()) {
                 return getApprovalNotFoundErrorPage(model);
             }
-            else if (approval.get().getManager().getId() != manager.getId()) {
-                return getApprovalNotSuperiorOfRequesterErrorPage(model);
-            } else {
-                model.addAttribute("approval", approval.get());
-                model.addAttribute("request", approval.get().getRequest());
-                model.addAttribute("allApprovals", approval.get().getRequest().getApprovals());
-                model.addAttribute("manager", approval.get().getManager());
-                model.addAttribute("employee", approval.get().getManager().getEmployee());
+            Optional<Manager> manager = managerService.getManagerById(employee.get().getId());
+            if (!manager.isPresent()) {
+                return getNotAManagerErrorPage(model);
             }
-        } catch (NotFoundException e) {
-            return getNotEnrolledErrorPage(model);
-        } catch (NotAManagerException e) {
-            return getNotAManagerErrorPage(model);
+            if (approval.get().getManager().getId() != manager.get().getId()) {
+                return getApprovalNotSuperiorOfRequesterErrorPage(model);
+            }
+            model.addAttribute("approval", approval.get());
+            model.addAttribute("request", approval.get().getRequest());
+            model.addAttribute("allApprovals", approval.get().getRequest().getApprovals());
+            model.addAttribute("manager", approval.get().getManager());
+            model.addAttribute("employee", approval.get().getManager().getEmployee());
+            return "respond";
         }
-        return "respond";
+        return getNotEnrolledErrorPage(model);
     }
-
-
 }

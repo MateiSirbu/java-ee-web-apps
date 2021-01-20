@@ -5,9 +5,6 @@ import eu.msirbu.tw.tema3.repositories.RequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class RequestService {
     private final RequestRepository requestRepository;
@@ -17,13 +14,7 @@ public class RequestService {
         this.requestRepository = requestRepository;
     }
 
-    public int addRequest(Request request) {
-        return requestRepository.save(request).getId();
-    }
-
-    public List<Request> getAllRequests() {
-        List<Request> requestList = new ArrayList<>();
-        this.requestRepository.findAll().forEach(requestList::add);
-        return requestList;
+    public void addRequest(Request request) {
+        requestRepository.save(request);
     }
 }

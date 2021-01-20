@@ -2,16 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="en">
 <head>
     <title>Vacations@Contoso - Review subordinates' requests</title>
-    <link rel="stylesheet" type="text/css" href="/css/material-components-web.min.css"/>
-    <link rel="stylesheet" href="/css/material-icons.css"/>
-    <link rel="stylesheet" href="/css/roboto.css">
-    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="css/material-components-web.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/material-icons.css"/>
+    <link rel="stylesheet" type="text/css" href="css/roboto.css">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 </head>
 <body class="mdc-typography">
 <div class="navbar">
     <div class="navbar-logo-container">
-        <img class="navbar-logo" src="./images/logo_inline.png" alt="Logo">
+        <img class="navbar-logo" th:src="@{/images/logo_inline.png}" alt="Logo">
     </div>
     <div class="navbar-greetings-container">
         <div class="navbar-greetings">
@@ -28,6 +28,12 @@
 </div>
 <div class="page-content-navbar-constrained">
     <h1>Review your subordinates' requests</h1>
+    <div class="control">
+        <a href="/dashboard" class="mdc-button mdc-button--raised">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_back</i>
+            <span class="mdc-button__label">BACK TO DASHBOARD</span>
+        </a>
+    </div>
     <div class="mdc-data-table">
         <div class="mdc-data-table__table-container">
             <table class="mdc-data-table__table" aria-label="Dessert calories">
@@ -48,14 +54,14 @@
                     <td th:text="${approval.getRequest().getFormattedEndDate()}" class="mdc-data-table__cell"></td>
                     <td th:text="${approval.getRequest().getAggregatedStatus().getName()}"
                         class="mdc-data-table__cell"></td>
-                    <td th:if="${approval.getRequest().getAggregatedStatus().getName().equals('DECLINED')
-                    or approval.getStatus().getName().equals('APPROVED') or approval.getStatus().getName().equals('DECLINED')}"
+                    <td th:if="${!approval.getStatus().getName().equals('PENDING') or !approval.getRequest().getAggregatedStatus().getName().equals('PENDING')}"
                         class="mdc-data-table__cell">
                         <a class="mdc-button mdc-button--raised" th:href="@{'respond/' + ${approval.getId()}}">
                             <span class="mdc-button__label sign-out-label">VIEW</span>
                         </a>
                     </td>
-                    <td th:if="${approval.getStatus().getName().equals('PENDING')}" class="mdc-data-table__cell">
+                    <td th:if="${approval.getStatus().getName().equals('PENDING') and approval.getRequest().getAggregatedStatus().getName().equals('PENDING')}"
+                        class="mdc-data-table__cell">
                         <a class="mdc-button mdc-button--raised"
                            th:href="@{'respond/' + ${approval.getId()}}">
                             <span class="mdc-button__label sign-out-label">RESPOND</span>

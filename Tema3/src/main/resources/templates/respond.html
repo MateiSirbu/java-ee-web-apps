@@ -2,16 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="en">
 <head>
     <title>Vacations@Contoso - Respond to request</title>
-    <link rel="stylesheet" type="text/css" href=".././css/material-components-web.min.css"/>
-    <link rel="stylesheet" href=".././css/material-icons.css"/>
-    <link rel="stylesheet" href=".././css/roboto.css">
-    <link rel="stylesheet" href=".././css/style.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="../css/material-components-web.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/material-icons.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/roboto.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 </head>
 <body class="mdc-typography">
 <div class="navbar">
     <div class="navbar-logo-container">
-        <img class="navbar-logo" src=".././images/logo_inline.png" alt="Logo">
+        <img class="navbar-logo" th:src="@{/images/logo_inline.png}" alt="Logo">
     </div>
     <div class="navbar-greetings-container">
         <div class="navbar-greetings">
@@ -37,7 +37,16 @@
         </ul>
     </div>
     <div class="control">
-        The current status of this request is <span th:text="${request.getAggregatedStatus().getName()}"></span>.<br>
+        <div class="status-with-icon">
+            The current status of this request is&nbsp;
+            <i th:if="${request.getAggregatedStatus().getName().equals('APPROVED')}" class="material-icons"
+               aria-hidden="true">check</i>
+            <i th:if="${request.getAggregatedStatus().getName().equals('DECLINED')}" class="material-icons"
+               aria-hidden="true">close</i>
+            <i th:if="${request.getAggregatedStatus().getName().equals('PENDING')}" class="material-icons"
+               aria-hidden="true">hourglass_empty</i>
+        <span th:text="${request.getAggregatedStatus().getName()}"></span>.<br>
+        </div>
     </div>
     <div class="control">
         The managers of the requester have responded as following:<br>
@@ -49,20 +58,22 @@
                     th:if="${approval.getStatus().getName().equals('PENDING')}">hasn't responded to the request.</span>
             </li>
         </ul>
-        Note that <b>failure to respond within 2 days</b> before the OOO period would come into effect means <b>declining the request</b> on your behalf.
+        Note that <b>failure to respond within 2 days</b> before the OOO period would come into effect means <b>declining
+        the request</b> on your behalf.
     </div>
-    <div th:if="${request.getAggregatedStatus().equals('PENDING') and approval.getStatus().getName().equals('PENDING')}" class="control">
+    <div th:if="${request.getAggregatedStatus().getName().equals('PENDING') and approval.getStatus().getName().equals('PENDING')}"
+         class="control">
         Please state your response:&nbsp;&nbsp;
-        <a class="mdc-button mdc-button--raised" href="/dashboard">
+        <a class="mdc-button mdc-button--raised" th:href="@{'approve/' + ${approval.getId()}}">
             <i class="material-icons mdc-button__icon" aria-hidden="true">check</i>
-            <span class="mdc-button__label sign-out-label">ACCEPT</span>
+            <span class="mdc-button__label sign-out-label">APPROVE</span>
         </a>
-        <a class="mdc-button mdc-button--raised" href="/dashboard">
+        <a class="mdc-button mdc-button--raised" th:href="@{'decline/' + ${approval.getId()}}">
             <i class="material-icons mdc-button__icon" aria-hidden="true">close</i>
             <span class="mdc-button__label sign-out-label">DECLINE</span>
         </a>
         &nbsp;&nbsp;Otherwise, &nbsp;&nbsp;
-        <a class="mdc-button mdc-button--raised" href="/dashboard">
+        <a class="mdc-button mdc-button--raised" href="/review-subordinates">
             <span class="mdc-button__label sign-out-label">CANCEL</span>
         </a>
         .
@@ -70,7 +81,7 @@
     <div th:if="${!approval.getStatus().getName().equals('PENDING')}" class="control">
         Your response has already been submitted.
     </div>
-    <div th:if="${!request.getAggregatedStatus().equals('PENDING')}" class="control">
+    <div th:if="${!request.getAggregatedStatus().getName().equals('PENDING')}" class="control">
         <div class="control">
             <a class="mdc-button mdc-button--raised" href="/review-subordinates">
                 <span class="mdc-button__label sign-out-label">CLOSE</span>

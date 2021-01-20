@@ -29,9 +29,11 @@
 <div class="page-content-navbar-constrained">
     <h1>Your dashboard</h1>
     <div class="control">
-        You can request <b><span th:text="${requestableDays}"></span></b> days off out of your <b><span th:text="${remainingDays}"></span></b> remaining vacation days.<br>
+        You can request <b><span th:text="${requestableDays}"></span></b> days off out of your <b><span
+            th:text="${remainingDays}"></span></b> remaining vacation days.<br>
         (Your quota is set at <b><span th:text="${quota}"></span></b> days.
-        <b><span th:text="${approvedDays}"></span></b> days have been approved, <b><span th:text="${pendingDays}"></span></b> days are pending approval.)
+        <b><span th:text="${approvedDays}"></span></b> days have been approved, <b><span
+            th:text="${pendingDays}"></span></b> days are pending approval.)
     </div>
     <div class="control">
         <a href="/request" class="mdc-button mdc-button--raised">
@@ -40,7 +42,7 @@
         </a>
     </div>
     <div class="control" th:if="${manager != null}">
-        <a href="/respond" class="mdc-button mdc-button--raised">
+        <a href="/review-subordinates" class="mdc-button mdc-button--raised">
             <i class="material-icons mdc-button__icon" aria-hidden="true">assignment</i>
             <span class="mdc-button__label">RESPOND TO SUBORDINATES' REQUESTS</span>
         </a>

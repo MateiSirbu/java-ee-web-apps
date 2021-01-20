@@ -63,6 +63,14 @@ public class Employee implements Serializable {
         return givenName;
     }
 
+    public String getFullName() {
+        return givenName + " " + familyName;
+    }
+
+    public String getFullNameAndEmail() {
+        return getFullName() + " (" + email + ") ";
+    }
+
     public List<Request> getRequests() {
         return requests;
     }

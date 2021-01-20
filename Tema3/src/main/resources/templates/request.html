@@ -51,8 +51,7 @@
             Please note that weekends and public holidays do not count towards your quota.<br>
             <div th:if="${teamLeaders.isEmpty() and superior == null}">
                 You are the CEO, therefore your request will be approved automatically, if your inputs are valid and
-                within
-                constraints.
+                within constraints.
             </div>
             <div th:if="${!teamLeaders.isEmpty() or superior != null}">
                 Additionally, all the employees you report to have to accept your request for the leave to be considered

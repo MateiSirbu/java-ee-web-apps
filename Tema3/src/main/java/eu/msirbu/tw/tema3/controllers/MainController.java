@@ -1,10 +1,12 @@
 package eu.msirbu.tw.tema3.controllers;
 
+import eu.msirbu.tw.tema3.entities.Approval;
 import eu.msirbu.tw.tema3.entities.Employee;
 import eu.msirbu.tw.tema3.entities.Manager;
 import eu.msirbu.tw.tema3.entities.PublicHoliday;
 import eu.msirbu.tw.tema3.exceptions.NotAManagerException;
 import eu.msirbu.tw.tema3.exceptions.NotFoundException;
+import eu.msirbu.tw.tema3.services.ApprovalService;
 import eu.msirbu.tw.tema3.services.EmployeeService;
 import eu.msirbu.tw.tema3.services.ManagerService;
 import eu.msirbu.tw.tema3.services.PublicHolidayService;
@@ -14,11 +16,12 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
-import static eu.msirbu.tw.tema3.controllers.utils.Utils.getLoginInfo;
-import static eu.msirbu.tw.tema3.controllers.utils.Utils.getNotEnrolledErrorPage;
+import static eu.msirbu.tw.tema3.controllers.utils.Utils.*;
 
 @Controller
 public class MainController {
@@ -27,6 +30,7 @@ public class MainController {
     private EmployeeService employeeService;
     private ManagerService managerService;
     private PublicHolidayService publicHolidayService;
+
 
     @Autowired
     public void setAuthorizedClientService(OAuth2AuthorizedClientService authorizedClientService) {
@@ -87,5 +91,4 @@ public class MainController {
         model.addAttribute("manager", manager);
         return "dashboard";
     }
-
 }

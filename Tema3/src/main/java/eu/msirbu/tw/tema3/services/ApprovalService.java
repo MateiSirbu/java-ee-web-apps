@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ApprovalService {
@@ -27,5 +28,9 @@ public class ApprovalService {
         List<Approval> approvalList = new ArrayList<>();
         this.approvalRepository.findAll().forEach(approvalList::add);
         return approvalList;
+    }
+
+    public Optional<Approval> getApprovalById(int approvalId) {
+        return this.approvalRepository.findById(approvalId);
     }
 }

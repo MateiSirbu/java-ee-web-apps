@@ -150,7 +150,7 @@ public class RequestController {
             Employee employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
             requestToSubmit = new Request(employee, effective, until);
 
-            // get existing requests; if they overlap with this one, abort
+            // get existing pending/approved requests; if one of them overlaps with this one, abort
             List<Request> existingRequests = employee.getRequests();
             for (Request existingRequest: existingRequests) {
                 final boolean isOverlapping = requestToSubmit.getStartDate().isBefore(existingRequest.getEndDate()) && existingRequest.getStartDate().isBefore(requestToSubmit.getEndDate());

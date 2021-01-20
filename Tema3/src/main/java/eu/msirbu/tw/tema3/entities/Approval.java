@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "Approval")
-public class Approval implements Serializable {
+public class Approval implements Serializable, Comparable<Approval> {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,4 +68,8 @@ public class Approval implements Serializable {
         this.request = request;
     }
 
+    @Override
+    public int compareTo(Approval o) {
+        return request.getStartDate().compareTo(o.getRequest().getStartDate());
+    }
 }

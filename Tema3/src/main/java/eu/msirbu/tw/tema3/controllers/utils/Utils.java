@@ -136,5 +136,18 @@ public class Utils {
         model.addAttribute("errorAnchorText", "BACK TO THE REQUEST FORM");
         return "error";
     }
-
+    public static String getApprovalNotSuperiorOfRequesterErrorPage(Model model) {
+        model.addAttribute("errorHeadline", "You are not authorized to view this resource.");
+        model.addAttribute("errorDetails", "You cannot respond to this review because you do not manage the requester.");
+        model.addAttribute("errorAnchorHref", "/review-subordinates");
+        model.addAttribute("errorAnchorText", "BACK TO SUBORDINATES' REQUESTS");
+        return "error";
+    }
+    public static String getApprovalNotFoundErrorPage(Model model) {
+        model.addAttribute("errorHeadline", "Request not found.");
+        model.addAttribute("errorDetails", "This is not the request you are looking for.");
+        model.addAttribute("errorAnchorHref", "/review-subordinates");
+        model.addAttribute("errorAnchorText", "BACK TO SUBORDINATES' REQUESTS");
+        return "error";
+    }
 }

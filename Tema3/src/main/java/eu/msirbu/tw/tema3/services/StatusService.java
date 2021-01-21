@@ -1,3 +1,7 @@
+/*
+ * Vacations @ Contoso
+ * (C) 2021 Matei Sîrbu.
+ */
 package eu.msirbu.tw.tema3.services;
 
 import eu.msirbu.tw.tema3.entities.Status;

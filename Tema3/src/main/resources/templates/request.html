@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="en">
 <head>
     <title>Vacations@Contoso - Request a vacation</title>
-    <link rel="stylesheet" type="text/css" href="css/material-components-web.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/style.css"/>
-    <link rel="stylesheet" type="text/css" href="css/material-icons.css"/>
-    <link rel="stylesheet" type="text/css" href="css/roboto.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/material-components-web.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/material-icons.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/roboto.css}"/>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 </head>
 <body class="mdc-typography">
@@ -16,12 +16,11 @@
     <div class="navbar-greetings-container">
         <div class="navbar-greetings">
             <b>Hello,
-                <img th:src="@{images/active_directory.png}" alt="Active Directory icon"
-                     src="../static/images/active_directory.png" width="20" height="20">
+                <img th:src="@{/images/active_directory.png}" alt="Active Directory icon" width="20" height="20">
                 <span th:text="${name}"></span></b>&nbsp;(<span th:text="${email}"></span>)
         </div>
     </div>
-    <a class="mdc-button mdc-button--raised sign-out-button" href="login">
+    <a class="mdc-button mdc-button--raised sign-out-button" href="https://login.microsoftonline.com/17bbdfed-a2bb-43a5-9087-16ee91370465/oauth2/logout?post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogout">
         <i class="material-icons mdc-button__icon" aria-hidden="true">exit_to_app</i>
         <span class="mdc-button__label sign-out-label">SIGN OUT</span>
     </a>

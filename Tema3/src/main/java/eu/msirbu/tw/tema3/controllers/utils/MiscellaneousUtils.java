@@ -1,3 +1,7 @@
+/*
+ * Vacations @ Contoso
+ * (C) 2021 Matei Sîrbu.
+ */
 package eu.msirbu.tw.tema3.controllers.utils;
 
 import eu.msirbu.tw.tema3.services.EmployeeService;
@@ -19,8 +23,17 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
+/**
+ * Various utilities and syntactic sugar for page rendering.
+ */
 public class MiscellaneousUtils {
-
+    /**
+     * Facilitates authentication via OAuth2 and retrieves user data from Azure AD and Microsoft Graph.
+     * @param model The UI model.
+     * @param authenticationToken The OAuth2 authentication token.
+     * @param authorizedClientService The OAuth2 authorized client service.
+     * @param employeeService The service that manipulates Employee objects in the repository.
+     */
     public static void getLoginInfo(Model model, OAuth2AuthenticationToken authenticationToken, OAuth2AuthorizedClientService authorizedClientService, EmployeeService employeeService) {
         OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(authenticationToken.getAuthorizedClientRegistrationId(), authenticationToken.getName());
         String userInfoEndpointUri = client.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
@@ -36,6 +49,14 @@ public class MiscellaneousUtils {
             employeeService.getEmployeeByEmail((String) userAttributes.get("email"));
         }
     }
+
+    /**
+     * Counts the days that are exempt from being counted, i.e. weekends and public holidays.
+     * @param start The start of the date range.
+     * @param end The end of the date range.
+     * @param publicHolidayService The service that manipulates PublicHoliday objects in the repository.
+     * @return The number of counted days.
+     */
     public static int countExemptDays(LocalDate start, LocalDate end, PublicHolidayService publicHolidayService) {
         long numberOfDays = ChronoUnit.DAYS.between(start, end.plusDays(1));
         int exemptDays = 0;
@@ -48,6 +69,7 @@ public class MiscellaneousUtils {
         }
         return exemptDays;
     }
+    /* Syntactic sugar for error & success page rendering: */
     public static String getNotEnrolledErrorPage(Model model) {
         model.addAttribute("errorHeadline", "You are not authorized to view this resource.");
         model.addAttribute("errorDetails", "You are signed in via Contoso's Azure AD, but this user is not enrolled in Vacations@Contoso.");

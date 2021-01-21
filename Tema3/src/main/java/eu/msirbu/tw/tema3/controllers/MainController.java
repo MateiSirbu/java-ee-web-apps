@@ -1,8 +1,11 @@
+/*
+ * Vacations @ Contoso
+ * (C) 2021 Matei Sîrbu.
+ */
 package eu.msirbu.tw.tema3.controllers;
 
 import eu.msirbu.tw.tema3.entities.Employee;
 import eu.msirbu.tw.tema3.entities.Manager;
-import eu.msirbu.tw.tema3.entities.PublicHoliday;
 import eu.msirbu.tw.tema3.services.EmployeeService;
 import eu.msirbu.tw.tema3.services.ManagerService;
 import eu.msirbu.tw.tema3.services.PublicHolidayService;
@@ -13,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
 import java.util.Optional;
 
 import static eu.msirbu.tw.tema3.controllers.utils.MiscellaneousUtils.getLoginInfo;
@@ -21,6 +23,8 @@ import static eu.msirbu.tw.tema3.controllers.utils.MiscellaneousUtils.getNotEnro
 
 @Controller
 public class MainController {
+
+    /* Autowired services */
 
     private OAuth2AuthorizedClientService authorizedClientService;
     private EmployeeService employeeService;
@@ -47,21 +51,19 @@ public class MainController {
         this.managerService = managerService;
     }
 
+    /* Mappings */
+
+    /**
+     * Home page endpoint.
+     */
     @GetMapping("/")
     public String getLoginPage() {
         return "index";
     }
 
-    @GetMapping("/public-holidays")
-    public String getPublicHolidaysPage(Model model, OAuth2AuthenticationToken authenticationToken) {
-        getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
-        if (!employeeService.getEmployeeByEmail((String) model.getAttribute("email")).isPresent())
-            return getNotEnrolledErrorPage(model);
-        List<PublicHoliday> publicHolidayList = publicHolidayService.getAllPublicHolidays();
-        model.addAttribute("holidays", publicHolidayList);
-        return "public-holidays";
-    }
-
+    /**
+     * Dashboard endpoint.
+     */
     @GetMapping("/dashboard")
     public String getManagePage(Model model, OAuth2AuthenticationToken authenticationToken) {
         getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);

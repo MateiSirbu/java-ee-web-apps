@@ -2,16 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="en">
 <head>
     <title>Vacations@Contoso</title>
-    <link rel="stylesheet" type="text/css" href="css/material-components-web.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/style.css"/>
-    <link rel="stylesheet" type="text/css" href="css/material-icons.css"/>
-    <link rel="stylesheet" type="text/css" href="css/roboto.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/material-components-web.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/material-icons.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/roboto.css}"/>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 </head>
 <body class="mdc-typography">
 <div class="home-container">
     <div class="home-card">
-        <img class="main-logo" th:src="@{images/logo.png}" alt="logo" src="../static/images/logo.png">
+        <img class="main-logo" th:src="@{/images/logo.png}" alt="logo" src="../static/images/logo.png">
         <a class="mdc-button mdc-button--raised" href="oauth2/authorization/azure">
             <img th:src="@{images/active_directory.png}" alt="Active Directory icon" src="../static/images/active_directory.png" width="25" height="25">
             <span class="mdc-button__label">&nbsp;&nbsp;SIGN IN WITH AZURE ACTIVE DIRECTORY</span>

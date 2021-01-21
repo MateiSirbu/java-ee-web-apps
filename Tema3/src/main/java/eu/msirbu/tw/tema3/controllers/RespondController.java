@@ -1,3 +1,7 @@
+/*
+ * Vacations @ Contoso
+ * (C) 2021 Matei Sîrbu.
+ */
 package eu.msirbu.tw.tema3.controllers;
 
 import eu.msirbu.tw.tema3.entities.Approval;
@@ -24,6 +28,8 @@ import static eu.msirbu.tw.tema3.controllers.utils.MiscellaneousUtils.*;
 
 @Controller
 public class RespondController {
+
+    /* Autowired services */
 
     private OAuth2AuthorizedClientService authorizedClientService;
     private EmployeeService employeeService;
@@ -56,6 +62,11 @@ public class RespondController {
         this.statusService = statusService;
     }
 
+    /* Mappings */
+
+    /**
+     * "Review your subordinates' requests" endpoint.
+     */
     @GetMapping("/review-subordinates")
     public String getReviewSubordinatesPage(Model model, OAuth2AuthenticationToken authenticationToken) {
         getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
@@ -73,6 +84,9 @@ public class RespondController {
         return getNotEnrolledErrorPage(model);
     }
 
+    /**
+     * "Approve request with ID" endpoint
+     */
     @GetMapping(path = "/respond/approve/{id}")
     public String getRespondApprovePage(@PathVariable(value = "id") int approvalId, Model model, OAuth2AuthenticationToken authenticationToken) {
         @SuppressWarnings("OptionalGetWithoutIsPresent") final Status APPROVED = statusService.getStatusByName("APPROVED").get();
@@ -99,6 +113,9 @@ public class RespondController {
         return getNotEnrolledErrorPage(model);
     }
 
+    /**
+     * "Decline request with ID" endpoint
+     */
     @GetMapping(path = "/respond/decline/{id}")
     public String getRespondDeclinePage(@PathVariable(value = "id") int approvalId, Model model, OAuth2AuthenticationToken authenticationToken) {
         @SuppressWarnings("OptionalGetWithoutIsPresent") final Status DECLINED = statusService.getStatusByName("DECLINED").get();

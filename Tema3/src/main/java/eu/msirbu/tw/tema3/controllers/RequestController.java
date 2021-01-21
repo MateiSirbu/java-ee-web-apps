@@ -1,3 +1,7 @@
+/*
+ * Vacations @ Contoso
+ * (C) 2021 Matei Sîrbu.
+ */
 package eu.msirbu.tw.tema3.controllers;
 
 import eu.msirbu.tw.tema3.entities.*;
@@ -64,6 +68,8 @@ public class RequestController {
     public void setPublicHolidayService(PublicHolidayService publicHolidayService) {
         this.publicHolidayService = publicHolidayService;
     }
+
+    /* Mappings */
 
     /**
      * Request form endpoint.

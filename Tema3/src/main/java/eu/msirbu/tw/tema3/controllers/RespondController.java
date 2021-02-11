@@ -88,7 +88,7 @@ public class RespondController {
      * "Approve request with ID" endpoint
      */
     @GetMapping(path = "/respond/approve/{id}")
-    public String getRespondApprovePage(@PathVariable(value = "id") int approvalId, Model model, OAuth2AuthenticationToken authenticationToken) {
+    public String getRespondApprovePage(@PathVapriable(value = "id") int approvalId, Model model, OAuth2AuthenticationToken authenticationToken) {
         @SuppressWarnings("OptionalGetWithoutIsPresent") final Status APPROVED = statusService.getStatusByName("APPROVED").get();
         getLoginInfo(model, authenticationToken, authorizedClientService, employeeService);
         Optional<Employee> employee = employeeService.getEmployeeByEmail((String) model.getAttribute("email"));
